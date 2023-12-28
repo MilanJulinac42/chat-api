@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import UserList from "./components/UserList";
@@ -5,11 +6,11 @@ import NicknamePrompt from "./components/NicknamePrompt";
 import ChatBox from "./components/ChatBox";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:4000");
 
 interface Message {
-    sender: string; // User nickname
-    content: string; // Message content
+    sender: string;
+    content: string;
 }
 
 export default function Home() {

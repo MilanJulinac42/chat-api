@@ -1,8 +1,9 @@
+"use client";
 import React, { useState } from "react";
 
 interface Message {
-    sender: string; // User nickname
-    content: string; // Message content
+    sender: string;
+    content: string;
 }
 
 interface ChatBoxProps {

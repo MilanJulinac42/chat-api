@@ -1,34 +1,33 @@
-import express, { Request, Response } from "express";
-import http from "http";
-import socketIO from "socket.io";
+const express = require("express");
+const http = require("http");
+const socketIO = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 const io = new socketIO.Server(server);
 
-const users: Map<string, { socket: socketIO.Socket; nickname: string }> =
-    new Map();
+const users = new Map();
 
-export const getUsers = () => {
+exports.getUsers = () => {
     return Array.from(users.values()).map((user) => user.nickname);
 };
 
-io.on("connection", (socket: socketIO.Socket) => {
+io.on("connection", (socket) => {
     console.log("User connected");
 
-    socket.on("set-nickname", (nickname: string) => {
+    socket.on("set-nickname", (nickname) => {
         try {
             users.set(socket.id, { socket, nickname });
             console.log(`User ${socket.id} set nickname to ${nickname}`);
 
             io.emit("user-nickname-updated", socket.id, nickname);
         } catch (error) {
-            console.error(`Error setting nickname:`, error);
+            console.error("Error setting nickname:", error);
             socket.emit("nickname-error", "Failed to set nickname");
         }
     });
 
-    socket.on("join-chat", (roomName: string) => {
+    socket.on("join-chat", (roomName) => {
         try {
             socket.join(roomName);
             console.log(`User joined ${roomName}`);
@@ -38,16 +37,16 @@ io.on("connection", (socket: socketIO.Socket) => {
         }
     });
 
-    socket.on("chat-message", (message: string) => {
+    socket.on("chat-message", (message) => {
         const user = users.get(socket.id);
         const firstRoom = socket.rooms.values().next().value;
         try {
             io.to(firstRoom).emit("chat-message", {
-                sender: user!.nickname,
+                sender: user.nickname,
                 content: message,
             });
         } catch (error) {
-            console.error(`Error broadcasting message:`, error);
+            console.error("Error broadcasting message:", error);
             socket.emit("message-error", "Failed to send message");
         }
     });
@@ -58,6 +57,6 @@ io.on("connection", (socket: socketIO.Socket) => {
     });
 });
 
-server.listen(3000, () => {
-    console.log("Server listening on port 3000");
+server.listen(4000, () => {
+    console.log("Server listening on port 4000");
 });
