@@ -23,10 +23,6 @@ export default function Home() {
         socket.on("set-nickname", (nickname) => {
             setUsers((prevUsers) => [...prevUsers, nickname]);
         });
-
-        return () => {
-            socket.disconnect();
-        };
     }, [socket]);
 
     useEffect(() => {
@@ -50,6 +46,11 @@ export default function Home() {
         setMessage("");
     };
 
+    const handleLeaveChat = () => {
+        socket.emit("leave-chat");
+        socket.disconnect();
+    };
+
     return (
         <main className={styles.main}>
             {showPrompt && <NicknamePrompt onJoin={handleJoin} />}
@@ -64,6 +65,7 @@ export default function Home() {
                     onChange={(e) => setMessage(e.target.value)}
                 />
                 <button type="submit">Send</button>
+                <button onClick={handleLeaveChat}>Leave Chat</button>
             </form>
         </main>
     );

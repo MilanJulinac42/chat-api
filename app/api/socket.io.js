@@ -70,6 +70,11 @@ io.on("connection", (socket) => {
         users.delete(socket.id);
         console.log("User disconnected");
     });
+
+    socket.on("leave-chat", () => {
+        console.log(`User ${socket.id} left the chat`);
+        users.delete(socket.id);
+    });
 });
 
 server.listen(4000, () => {
