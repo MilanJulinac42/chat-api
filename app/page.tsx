@@ -20,18 +20,9 @@ export default function Home() {
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
-        fetch("/api/users")
-            .then((response) => response.json())
-            .then((data) => setUsers(data));
-
-        socket.on(
-            "user-nickname-updated",
-            (userId: string, nickname: string) => {
-                setUsers((prevUsers) =>
-                    prevUsers.map((user) => (user === userId ? nickname : user))
-                );
-            }
-        );
+        socket.on("set-nickname", (nickname) => {
+            setUsers((prevUsers) => [...prevUsers, nickname]);
+        });
 
         return () => {
             socket.disconnect();
@@ -49,6 +40,7 @@ export default function Home() {
 
     const handleJoin = (nickname: string) => {
         socket.emit("join-chat", "Cat Room");
+        socket.emit("set-nickname", nickname);
         setShowPrompt(false);
     };
 

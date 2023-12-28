@@ -1,10 +1,16 @@
 const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 const server = http.createServer(app);
-const io = new socketIO.Server(server);
+const io = new socketIO.Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+    },
+});
 
 const users = new Map();
 
@@ -12,10 +18,19 @@ exports.getUsers = () => {
     return Array.from(users.values()).map((user) => user.nickname);
 };
 
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+    })
+);
+
 io.on("connection", (socket) => {
     console.log("User connected");
 
     socket.on("set-nickname", (nickname) => {
+        console.log("test");
         try {
             users.set(socket.id, { socket, nickname });
             console.log(`User ${socket.id} set nickname to ${nickname}`);
