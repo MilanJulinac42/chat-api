@@ -9,6 +9,10 @@ const io = new socketIO.Server(server);
 const users: Map<string, { socket: socketIO.Socket; nickname: string }> =
     new Map();
 
+export const getUsers = () => {
+    return Array.from(users.values()).map((user) => user.nickname);
+};
+
 io.on("connection", (socket: socketIO.Socket) => {
     console.log("User connected");
 
