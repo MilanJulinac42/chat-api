@@ -42,7 +42,10 @@ io.on("connection", (socket: socketIO.Socket) => {
         const user = users.get(socket.id);
         const firstRoom = socket.rooms.values().next().value;
         try {
-            io.to(firstRoom).emit("chat-message", user!.nickname, message);
+            io.to(firstRoom).emit("chat-message", {
+                sender: user!.nickname,
+                content: message,
+            });
         } catch (error) {
             console.error(`Error broadcasting message:`, error);
             socket.emit("message-error", "Failed to send message");

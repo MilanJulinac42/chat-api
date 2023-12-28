@@ -7,11 +7,16 @@ import io from "socket.io-client";
 
 const socket = io("http://localhost:3000");
 
+interface Message {
+    sender: string; // User nickname
+    content: string; // Message content
+}
+
 export default function Home() {
     const [users, setUsers] = useState<string[]>([]);
     const [showPrompt, setShowPrompt] = useState(true);
     const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
         fetch("/api/users")
@@ -33,9 +38,12 @@ export default function Home() {
     }, [socket]);
 
     useEffect(() => {
-        socket.on("chat-message", (message: string) => {
-            setMessages((prevMessages) => [...prevMessages, message]);
-        });
+        socket.on(
+            "chat-message",
+            (newMessage: { sender: string; content: string }) => {
+                setMessages((prevMessages) => [...prevMessages, newMessage]);
+            }
+        );
     }, [socket]);
 
     const handleJoin = (nickname: string) => {

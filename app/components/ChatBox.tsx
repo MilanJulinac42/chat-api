@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 
+interface Message {
+    sender: string; // User nickname
+    content: string; // Message content
+}
+
 interface ChatBoxProps {
-    messages: string[];
+    messages: Message[];
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ messages }) => {
@@ -19,8 +24,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages }) => {
     return (
         <div id="chat-box" className="chat-box" onScroll={handleScroll}>
             {messages.map((message) => (
-                <div key={message} className="chat-message">
-                    {message}
+                <div key={message.content} className="chat-message">
+                    <span className="sender">{message.sender}: </span>
+                    {message.content}
                 </div>
             ))}
             {scrollToBottom && <div className="scroll-indicator" />}
