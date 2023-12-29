@@ -69,8 +69,7 @@ export default function Home() {
             <div className="mainWrapper">
                 <h1>chat box</h1>
                 <ChatBox messages={messages} />
-
-                <form onSubmit={handleSendMessage}>
+                <form onSubmit={handleSendMessage} className="form-wrapper">
                     <input
                         type="text"
                         placeholder="Type your message..."
