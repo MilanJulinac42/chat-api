@@ -124,3 +124,10 @@ a {
     padding: 20px;
     align-items: center;
 }
+
+.chat-box {
+    max-height: 80%;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+    width: 70%;
+}
