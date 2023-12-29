@@ -108,3 +108,19 @@ a {
         color-scheme: dark;
     }
 }
+
+.userList {
+    border: 1px solid white;
+    width: 200px;
+    list-style: none;
+}
+
+.mainWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid white;
+    width: 100%;
+    padding: 20px;
+    align-items: center;
+}

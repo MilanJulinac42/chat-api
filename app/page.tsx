@@ -66,18 +66,21 @@ export default function Home() {
         <main className={styles.main}>
             {showPrompt && <NicknamePrompt onJoin={handleJoin} />}
             <UserList users={users} socket={socket} />
-            <ChatBox messages={messages} />
+            <div className="mainWrapper">
+                <h1>chat box</h1>
+                <ChatBox messages={messages} />
 
-            <form onSubmit={handleSendMessage}>
-                <input
-                    type="text"
-                    placeholder="Type your message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                />
-                <button type="submit">Send</button>
-                <button onClick={handleLeaveChat}>Leave Chat</button>
-            </form>
+                <form onSubmit={handleSendMessage}>
+                    <input
+                        type="text"
+                        placeholder="Type your message..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
+                    <button type="submit">Send</button>
+                    <button onClick={handleLeaveChat}>Leave Chat</button>
+                </form>
+            </div>
         </main>
     );
 }

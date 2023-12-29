@@ -6,7 +6,8 @@ const UserList: React.FC<{
     socket: any;
 }> = ({ users, socket }) => {
     return (
-        <ul>
+        <ul className="userList">
+            <h3>Online users</h3>
             {users.map((user) => (
                 <li key={user}>{user}</li>
             ))}
