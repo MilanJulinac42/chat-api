@@ -23,6 +23,12 @@ export default function Home() {
         socket.on("set-nickname", (nickname) => {
             setUsers((prevUsers) => [...prevUsers, nickname]);
         });
+
+        socket.on("user-list-updated", (updatedUserList) => {
+            setUsers(updatedUserList);
+        });
+
+        socket.emit("user-list-updated");
     }, [socket]);
 
     useEffect(() => {

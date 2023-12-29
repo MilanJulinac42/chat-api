@@ -14,9 +14,9 @@ const io = new socketIO.Server(server, {
 
 const users = new Map();
 
-exports.getUsers = () => {
+function getUsers() {
     return Array.from(users.values()).map((user) => user.nickname);
-};
+}
 
 app.use(
     cors({
@@ -26,16 +26,20 @@ app.use(
     })
 );
 
+app.get("/users", (req, res) => {
+    const usersList = getUsers();
+    res.json(usersList);
+});
+
 io.on("connection", (socket) => {
     console.log("User connected");
 
     socket.on("set-nickname", (nickname) => {
-        console.log("test");
         try {
-            users.set(socket.id, { socket, nickname });
+            users.set(socket.id, { nickname });
             console.log(`User ${socket.id} set nickname to ${nickname}`);
-
-            io.emit("user-nickname-updated", socket.id, nickname);
+            const updatedUserList = getUsers();
+            io.emit("user-list-updated", updatedUserList);
         } catch (error) {
             console.error("Error setting nickname:", error);
             socket.emit("nickname-error", "Failed to set nickname");
@@ -66,14 +70,27 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("user-left", (userId) => {
+        users.delete(userId);
+        const updatedUserList = getUsers();
+        io.emit("user-list-updated", updatedUserList);
+        console.log(`User ${userId} left the chat`);
+    });
+
     socket.on("disconnect", () => {
-        users.delete(socket.id);
-        console.log("User disconnected");
+        const userId = socket.id;
+        users.delete(userId);
+        const updatedUserList = getUsers();
+        io.emit("user-list-updated", updatedUserList);
+        console.log(`User ${userId} disconnected`);
     });
 
     socket.on("leave-chat", () => {
-        console.log(`User ${socket.id} left the chat`);
-        users.delete(socket.id);
+        const userId = socket.id;
+        users.delete(userId);
+        const updatedUserList = getUsers();
+        io.emit("user-list-updated", updatedUserList);
+        console.log(`User ${userId} left the chat`);
     });
 });
 
