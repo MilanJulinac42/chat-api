@@ -38,12 +38,8 @@ export default function Home() {
 
     useEffect(() => {
         socket.on("chat-message", (newMessage: Message) => {
-            console.log("Received message:", newMessage);
             setMessages((prevMessages) => [...prevMessages, newMessage]);
-            console.log("Updated messages state:", messages);
         });
-
-        console.log(messages);
     }, [socket]);
 
     useEffect(() => {
@@ -66,7 +62,6 @@ export default function Home() {
         socket.emit("leave-chat");
         socket.disconnect();
     };
-
     return (
         <main className={styles.main}>
             {showPrompt && <NicknamePrompt onJoin={handleJoin} />}

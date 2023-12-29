@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
             messages.set(room, [...(messages.get(room) || []), newMessage]);
             console.log(`Message sent to room: ${room}`);
 
-            io.to(room).emit("chat-message", newMessage);
+            io.emit("chat-message", newMessage);
         } catch (error) {
             console.error("Error handling chat message:", error);
             socket.emit("chat-error", "Failed to send message");
