@@ -13,9 +13,17 @@ const io = new socketIO.Server(server, {
 });
 
 const users = new Map();
+const messages = new Map();
 
 function getUsers() {
     return Array.from(users.values()).map((user) => user.nickname);
+}
+
+function getMessages() {
+    return Array.from(messages.values()).map((message) => ({
+        sender: message.sender,
+        content: message.content,
+    }));
 }
 
 app.use(
@@ -25,6 +33,11 @@ app.use(
         allowedHeaders: ["Content-Type"],
     })
 );
+
+app.get("/messages", (req, res) => {
+    const messagesList = getMessages();
+    res.json(messagesList);
+});
 
 app.get("/users", (req, res) => {
     const usersList = getUsers();
@@ -57,16 +70,26 @@ io.on("connection", (socket) => {
     });
 
     socket.on("chat-message", (message) => {
-        const user = users.get(socket.id);
-        const firstRoom = socket.rooms.values().next().value;
         try {
-            io.to(firstRoom).emit("chat-message", {
+            const user = users.get(socket.id);
+            const room = socket.handshake.auth.room;
+
+            if (!room) {
+                throw new Error("Room not found in handshake auth data");
+            }
+
+            const newMessage = {
                 sender: user.nickname,
                 content: message,
-            });
+            };
+
+            messages.set(room, [...(messages.get(room) || []), newMessage]);
+            console.log(`Message sent to room: ${room}`);
+
+            io.to(room).emit("chat-message", newMessage);
         } catch (error) {
-            console.error("Error broadcasting message:", error);
-            socket.emit("message-error", "Failed to send message");
+            console.error("Error handling chat message:", error);
+            socket.emit("chat-error", "Failed to send message");
         }
     });
 

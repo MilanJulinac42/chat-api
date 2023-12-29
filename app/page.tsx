@@ -6,11 +6,16 @@ import NicknamePrompt from "./components/NicknamePrompt";
 import ChatBox from "./components/ChatBox";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:4000");
+const socket = io("http://localhost:4000", {
+    auth: {
+        room: "Cat room",
+    },
+});
 
 interface Message {
     sender: string;
     content: string;
+    timestamp?: string;
 }
 
 export default function Home() {
@@ -32,12 +37,17 @@ export default function Home() {
     }, [socket]);
 
     useEffect(() => {
-        socket.on(
-            "chat-message",
-            (newMessage: { sender: string; content: string }) => {
-                setMessages((prevMessages) => [...prevMessages, newMessage]);
-            }
-        );
+        socket.on("chat-message", (newMessage: Message) => {
+            console.log("Received message:", newMessage);
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+            console.log("Updated messages state:", messages);
+        });
+
+        console.log(messages);
+    }, [socket]);
+
+    useEffect(() => {
+        socket.emit("join-chat", "Cat Room");
     }, [socket]);
 
     const handleJoin = (nickname: string) => {
